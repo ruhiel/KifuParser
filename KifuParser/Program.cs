@@ -13,13 +13,19 @@ namespace KifuParser
         {
             var move =
                 from line in Parse.Number.Token()
-                from srcX in Parse.Regex("[１２３４５６７８９]")
-                from srcY in Parse.Regex("[１２３４５６７８９]")
-                    //from piece in Parse.Regex("玉飛角金銀桂香歩龍馬と")
-                select new Move() { Line = line, SrcX = srcX, SrcY = srcY };
+                from destX in Parse.Regex("[１２３４５６７８９]")
+                from destY in Parse.Regex("[一二三四五六七八九]")
+                from piece in Parse.Regex("[玉飛角金銀桂香歩龍馬と]")
+                from action in Parse.Regex("[右左]?")
+                from a in Parse.Char('(')
+                from srcX in Parse.Regex("[1-9]")
+                from srcY in Parse.Regex("[1-9]")
+                from b in Parse.Char(')')
+
+                select new Move() { Line = line, DestX = destX, DestY = destY, SrcX = srcX, SrcY = srcY, Piece = piece, Action = action };
 
             var nullparse =
-                from v in Parse.Regex(".+").Token()
+                from v in Parse.Regex(".*").Token()
                 select new Move();
 
             Parser<IEnumerable<Move>> moves = move.Or(nullparse).Many().End();
@@ -38,7 +44,7 @@ namespace KifuParser
             var list = moves.Parse(stBuffer);
             foreach(var m in list)
             {
-                Console.WriteLine(m.Line);
+                Console.WriteLine(m.Piece);
             }
         }
     }
