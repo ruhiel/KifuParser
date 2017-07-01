@@ -1,4 +1,5 @@
-﻿using Sprache;
+﻿using KifuParser.Kif;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,40 +12,65 @@ namespace KifuParser
     {
         static void Main(string[] args)
         {
-            var move =
-                from line in Parse.Number.Token()
+            var posParseSame =
+                from pos in Parse.String("同")
+                select new { X = "同", Y = "同" };
+
+            var posParse =
                 from destX in Parse.Regex("[１２３４５６７８９]")
                 from destY in Parse.Regex("[一二三四五六七八九]")
-                from piece in Parse.Regex("[玉飛角金銀桂香歩龍馬と]")
-                from action in Parse.Regex("[右左]?")
+                select new { X = destX, Y = destY };
+
+            var srcPost =
                 from a in Parse.Char('(')
                 from srcX in Parse.Regex("[1-9]")
                 from srcY in Parse.Regex("[1-9]")
                 from b in Parse.Char(')')
+                select new { X = int.Parse(srcX), Y = int.Parse(srcY) };
 
-                select new Move() { Line = line, DestX = destX, DestY = destY, SrcX = srcX, SrcY = srcY, Piece = piece, Action = action };
+            var timeParse =
+                from t in Parse.Regex(@"\([\s\d]\d:\d\d\/\d\d:\d\d:\d\d\)").Token().Optional().Select(x => x.IsDefined ? x.Get().ToString() : string.Empty)
+                select t;
+
+            var gameInfoParse =
+                from key in Parse.Regex("[^：]+")
+                from c in Parse.String("：")
+                from value in Parse.Regex(".+").Or(Parse.Return(string.Empty))
+                select (Command)new GameInfoCommand(key, value);
+
+            var move =
+                from line in Parse.Number.Token()
+                from dest in posParseSame.Or(posParse).Token()
+                from promoted in Parse.String("成").Optional().Select(x => x.IsDefined ? x.Get().ToString() : string.Empty)
+                from piece in Parse.Regex("[玉飛角金銀桂香歩龍馬と]")
+                from leftright in Parse.Regex("[右左]").Optional().Select(x => x.IsDefined ? x.Get().ToString() : string.Empty)
+                from updown in Parse.Regex("[上直寄引]").Optional().Select(x => x.IsDefined ? x.Get().ToString() : string.Empty)
+                from action in Parse.Regex("不?成|打").Optional().Select(x => x.IsDefined ? x.Get().ToString() : string.Empty)
+                from src in srcPost.Optional().Select(x => x.IsDefined ? new { X = x.Get().X, Y = x.Get().Y } : new { X = 0, Y = 0 })
+                from time in timeParse
+                select (Command)new Move() { Line = line, DestX = dest.X, DestY = dest.Y, SrcX = src.X, SrcY = src.Y, Piece = piece, LeftRight = leftright, UpDown = updown, Action = action, Time = time};
+
+            var resign =
+                from line in Parse.Number.Token()
+                from r in Parse.String("投了").Token()
+                from time in timeParse
+                select (Command)new Move() { Line = line, Resign = true, Time = time };
 
             var nullparse =
-                from v in Parse.Regex(".*").Token()
-                select new Move();
+                from v in Parse.Regex(".*").Or(Parse.Return(string.Empty)).Token()
+                select (Command)new NullCommand();
 
-            Parser<IEnumerable<Move>> moves = move.Or(nullparse).Many().End();
+            var moves = gameInfoParse.Or(resign).Or(move).Or(nullparse).Many().End();
 
-            // StreamReader の新しいインスタンスを生成する
-            var cReader = (
-                new System.IO.StreamReader(@"TextFile1.txt", Encoding.Default)
-            );
-
-            // ファイルの最後まで読み込む
-            var stBuffer = cReader.ReadToEnd();
-
-            // cReader を閉じる (正しくは オブジェクトの破棄を保証する を参照)
-            cReader.Close();
-
-            var list = moves.Parse(stBuffer);
-            foreach(var m in list)
+            using (var sr = new System.IO.StreamReader(@"TextFile1.txt", Encoding.Default))
             {
-                Console.WriteLine(m.Piece);
+                // ファイルの最後まで読み込む
+                var content = sr.ReadToEnd();
+
+                foreach (var m in moves.Parse(content))
+                {
+                    Console.WriteLine($"{m.ToString()}");
+                }
             }
         }
     }

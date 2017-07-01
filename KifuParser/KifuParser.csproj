@@ -45,7 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Move.cs" />
+    <Compile Include="Kif\GameInfoCommand.cs" />
+    <Compile Include="Kif\Move.cs" />
+    <Compile Include="Kif\NullCommand.cs" />
+    <Compile Include="Kif\ParseResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
