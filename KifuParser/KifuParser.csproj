@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Kif\GameInfoCommand.cs" />
+    <Compile Include="Kif\KifParser.cs" />
     <Compile Include="Kif\MoveCommand.cs" />
     <Compile Include="Kif\NullCommand.cs" />
     <Compile Include="Kif\ICommand.cs" />
