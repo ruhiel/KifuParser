@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KifuParser.Kif
 {
-    public class GameInfoCommand : Command
+    public class GameInfoCommand : ICommand
     {
         public string Key { get; set; }
         public string Value { get; set; }

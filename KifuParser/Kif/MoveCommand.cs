@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KifuParser.Kif
 {
-    public class Move : Command
+    public class MoveCommand : ICommand
     {
         public string Line { get; set; }
         public int? SrcX { get; set; }
@@ -15,7 +15,7 @@ namespace KifuParser.Kif
         public string LeftRight { get; set; }
         public string DestY { get; internal set; }
         public string DestX { get; internal set; }
-        public string Time { get; internal set; }
+        public TimeSpan Time { get; internal set; }
         public bool Resign { get; set; }
         public string UpDown { get; internal set; }
         public string Action { get; internal set; }

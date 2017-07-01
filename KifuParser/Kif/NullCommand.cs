@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KifuParser.Kif
 {
-    public class NullCommand : Command
+    public class NullCommand : ICommand
     {
         override public string ToString() => "Null";
     }

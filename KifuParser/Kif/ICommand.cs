@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KifuParser.Kif
 {
-    public interface Command
+    public interface ICommand
     {
     }
 }
