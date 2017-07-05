@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Csa\CSAParser.cs" />
     <Compile Include="Kif\GameInfoCommand.cs" />
     <Compile Include="Kif\KifParser.cs" />
     <Compile Include="Kif\MoveCommand.cs" />
@@ -55,10 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="kifu\TextFile1.csa" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="kifu\TextFile1.txt" />
+    <None Include="kifu\TextFile1.kif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

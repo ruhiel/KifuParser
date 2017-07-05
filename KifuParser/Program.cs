@@ -1,4 +1,5 @@
-﻿using KifuParser.Kif;
+﻿using KifuParser.Csa;
+using KifuParser.Kif;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,12 @@ namespace KifuParser
     {
         static void Main(string[] args)
         {
-            using (var sr = new System.IO.StreamReader(@"TextFile1.txt", Encoding.Default))
+            using (var sr = new System.IO.StreamReader(@"TextFile1.csa", Encoding.Default))
             {
                 // ファイルの最後まで読み込む
                 var content = sr.ReadToEnd();
 
-                KifParser.ParseContent(content);
+                CSAParser.ParseContent(content);
             }
         }
     }
