@@ -62,6 +62,9 @@
   <ItemGroup>
     <None Include="kifu\TextFile1.kif" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Util\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(ProjectDir)kifu\*.*" "$(TargetDir)"</PreBuildEvent>
