@@ -14,7 +14,7 @@ namespace KifuParser.Csa
             var playerParser =
                 from n in Parse.Char('N').Token()
                 from bw in Parse.Regex("[+-]")
-                from player in Parse.Letter.AtLeastOnce().Text()
+                from player in Parse.Regex(".+").Text()
                 select player;
 
             var timeParser =
@@ -22,25 +22,37 @@ namespace KifuParser.Csa
                 from time in Parse.Number.Token()
                 select time;
 
-            var stateParser = timeParser.Or(playerParser);
+            var oneStatementParser = timeParser.Or(playerParser);
 
-            var multiStateParser =
+            var moreStateParser =
                 from comma in Parse.Char(',').Token()
-                from st in stateParser
+                from st in oneStatementParser
                 select st;
 
-            var lineParser =
-                from st in stateParser.Once()
-                from mst in multiStateParser.Many()
+            var statementParser =
+                from st in oneStatementParser.Once()
+                from mst in moreStateParser.Many()
                 select st.Concat(mst);
 
-            var p = lineParser.Many().End();
+            var oneRecordParser = statementParser.Many();
 
-            foreach (var a in p.Parse(content))
+            var moreRecordParser = from separtor in Parse.Regex(@"/\r\n")
+                             from rec in oneRecordParser
+                                   select rec;
+
+            var documentParser =
+                (from one in oneRecordParser.Once()
+                 from more in moreRecordParser.Many()
+                 select one.Concat(more)).End();      
+
+            foreach (var redords in documentParser.Parse(content))
             {
-                foreach(var c in a)
+                foreach(var statements in redords)
                 {
-                    Console.WriteLine(c);
+                    foreach(var statement in statements)
+                    {
+                        Console.WriteLine(statement);
+                    }
                 }
             }
         }
